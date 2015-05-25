@@ -9,9 +9,8 @@ See [WP:ACC/G](http://enwp.org/WP:ACC/G)
 ### Installation
 
 ```sh
-git clone ...
-git submodule init
-git submodule update
+git clone --recursive ...
+composer install --no-dev
 ```
 
 

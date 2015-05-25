@@ -8,7 +8,7 @@
     <meta name="author" content="">
 
     <!-- Le styles -->
-    <link href="{$baseurl}/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{$baseurl}/components/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <style type="text/css">
       body {
         padding-top: 60px;
@@ -27,7 +27,7 @@
         }
       }
     </style>
-    <link href="{$baseurl}/lib/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+    <link href="{$baseurl}/components/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
     <link href="{$baseurl}/lib/bootstrap-sortable/css/bootstrap-sortable.css" rel="stylesheet">
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->

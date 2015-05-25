@@ -1,6 +1,6 @@
 <?php
 
-require_once 'lib/password_compat/lib/password.php';
+require_once 'vendor/ircmaxell/password-compat/lib/password.php';
 
 class AuthUtility
 {

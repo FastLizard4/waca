@@ -8,14 +8,14 @@
     <meta name="author" content="">
 
     <!-- Le styles -->
-    <link href="{$baseurl}/lib/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="{$baseurl}/components/bootstrap/css/bootstrap.css" rel="stylesheet">
     <style type="text/css">
       body {
         padding-top: 20px;
         padding-bottom: 40px;
       }
     </style>
-    <link href="{$baseurl}/lib/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="{$baseurl}/components/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
