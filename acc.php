@@ -27,9 +27,6 @@ require_once 'functions.php';
 require_once 'includes/PdoDatabase.php';
 require_once 'includes/SmartyInit.php'; // this needs to be high up, but below config, functions, and database
 require_once 'includes/session.php';
-require_once 'lib/mediawiki-extensions-OAuth/lib/OAuth.php';
-require_once 'lib/mediawiki-extensions-OAuth/lib/JWT.php';
-require_once 'oauth/OAuthUtility.php';
 
 // Set the current version of the ACC.
 $version = "0.9.7";
@@ -1413,7 +1410,7 @@ elseif ($action == "done" && $_GET['id'] != "") {
     // TODO: make this transactional
     $request->save();
     
-    Logger::closeRequest(gGetDb(), $request, $gem, $messagebody);
+    Logger::closeRequest(gGetDb(), $request, $gem, $_POST['msgbody']);
     
 	if ($gem == '0') {
 		$crea = "Dropped";

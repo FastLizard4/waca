@@ -23,9 +23,6 @@ require_once 'functions.php';
 require_once 'includes/PdoDatabase.php';
 require_once 'includes/SmartyInit.php';
 require_once 'includes/session.php';
-require_once 'lib/mediawiki-extensions-OAuth/lib/OAuth.php';
-require_once 'lib/mediawiki-extensions-OAuth/lib/JWT.php';
-require_once 'oauth/OAuthUtility.php';
 
 // Check to see if the database is unavailable.
 // Uses the false variable as its the internal interface.
@@ -75,7 +72,12 @@ if( User::getCurrent() == false )
 if( ! User::getCurrent()->isAdmin() )
 {
     // Displays both the error message and the footer of the interface.
-    BootstrapSkin::displayAlertBox("I'm sorry, but, this page is restricted to administrators only.", "alert-error", "Access Denied",true,false);
+    BootstrapSkin::displayAlertBox(
+            "I'm sorry, but, this page is restricted to administrators only.", 
+            "alert-error", 
+            "Access Denied",
+            true,
+            false);
     BootstrapSkin::displayInternalFooter();
     die();
 }
@@ -89,25 +91,40 @@ if (isset ($_GET['approve']))
 
     if($user == false)
     {
-        BootstrapSkin::displayAlertBox("Sorry, the user you are trying to approve could not be found.", "alert-error", "Error",true,false);
+        BootstrapSkin::displayAlertBox(
+            "Sorry, the user you are trying to approve could not be found.", 
+            "alert-error", 
+            "Error",
+            true,
+            false);
         BootstrapSkin::displayInternalFooter();
         die();
     }
 
     if($user->isUser() || $user->isAdmin())
     {
-        BootstrapSkin::displayAlertBox("Sorry, the user you are trying to approve has already been approved.", "alert-error", "Error",true,false);
+        BootstrapSkin::displayAlertBox(
+            "Sorry, the user you are trying to approve has already been approved.", 
+            "alert-error", 
+            "Error",
+            true,
+            false);
         BootstrapSkin::displayInternalFooter();
         die();
     }
 
     $user->approve();
 
-    BootstrapSkin::displayAlertBox("Approved user " . htmlentities($user->getUsername(),ENT_COMPAT,'UTF-8'), "alert-info", "", false);
+    BootstrapSkin::displayAlertBox(
+        "Approved user " . htmlentities($user->getUsername(),ENT_COMPAT,'UTF-8'), 
+        "alert-info", 
+        "", 
+        false);
 
     Notification::userApproved($user);
 
     $headers = 'From: accounts-enwiki-l@lists.wikimedia.org';
+    // TODO: move to template?
     mail($user->getEmail(), "ACC Account Approved", "Dear " . $user->getOnWikiName() . ",\nYour account " . $user->getUsername() . " has been approved by " . User::getCurrent()->getUsername() . ". To login please go to $baseurl/acc.php.\n- The English Wikipedia Account Creation Team", $headers);
     BootstrapSkin::displayInternalFooter();
     die();
@@ -119,14 +136,24 @@ if (isset ($_GET['demote']))
 
     if( $user == false)
     {
-        BootstrapSkin::displayAlertBox("Sorry, the user you are trying to demote could not be found.", "alert-error", "Error",true,false);
+        BootstrapSkin::displayAlertBox(
+            "Sorry, the user you are trying to demote could not be found.", 
+            "alert-error", 
+            "Error",
+            true,
+            false);
         BootstrapSkin::displayInternalFooter();
         die();
     }
 
     if(!$user->isAdmin())
     {
-        BootstrapSkin::displayAlertBox("Sorry, the user you are trying to demote is not an admin.", "alert-error", "Error",true,false);
+        BootstrapSkin::displayAlertBox(
+            "Sorry, the user you are trying to demote is not an admin.", 
+            "alert-error", 
+            "Error",
+            true,
+            false);
         BootstrapSkin::displayInternalFooter();
         die();
     }
@@ -143,11 +170,17 @@ if (isset ($_GET['demote']))
     } else {
         $user->demote($_POST['reason']);
 
-        BootstrapSkin::displayAlertBox( "Changed " . htmlentities($user->getUsername(),ENT_COMPAT,'UTF-8') . "'s access to 'User'", "alert-info", "", false);
+        BootstrapSkin::displayAlertBox( 
+            "Changed " . htmlentities($user->getUsername(),ENT_COMPAT,'UTF-8') . "'s access to 'User'", 
+            "alert-info", 
+            "", 
+            false);
 
         Notification::userDemoted($user, $_POST['reason']);
 
         $headers = 'From: accounts-enwiki-l@lists.wikimedia.org';
+        
+        // TODO: move to template?
         mail($user->getEmail(), "ACC Account Demoted", "Dear " . $user->getOnWikiName() . ",\nYour account " . $user->getUsername() . " has been demoted by " . User::getCurrent()->getUsername() . " because " . User::getCurrent()->getUsername() . ". To contest this demotion please email accounts-enwiki-l@lists.wikimedia.org.\n- The English Wikipedia Account Creation Team", $headers);
         BootstrapSkin::displayInternalFooter();
         die();
@@ -159,14 +192,24 @@ if (isset ($_GET['suspend'])) {
 
     if($user == false)
     {
-        BootstrapSkin::displayAlertBox("Sorry, the user you are trying to suspend could not be found.", "alert-error", "Error",true,false);
+        BootstrapSkin::displayAlertBox(
+            "Sorry, the user you are trying to suspend could not be found.", 
+            "alert-error", 
+            "Error",
+            true,
+            false);
         BootstrapSkin::displayInternalFooter();
         die();
     }
 
     if($user->isSuspended())
     {
-        BootstrapSkin::displayAlertBox("Sorry, the user you are trying to suspend is already suspended.", "alert-error", "Error",true,false);
+        BootstrapSkin::displayAlertBox(
+            "Sorry, the user you are trying to suspend is already suspended.", 
+            "alert-error", 
+            "Error",
+            true,
+            false);
         BootstrapSkin::displayInternalFooter();
         die();
     }
@@ -183,9 +226,15 @@ if (isset ($_GET['suspend'])) {
         $user->suspend($_POST['reason']);
 
         Notification::userSuspended($user, $_POST['reason']);
-        BootstrapSkin::displayAlertBox("Suspended user " . htmlentities($user->getUsername(),ENT_COMPAT,'UTF-8'), "alert-info", "", false);
+        BootstrapSkin::displayAlertBox(
+            "Suspended user " . htmlentities($user->getUsername(),ENT_COMPAT,'UTF-8'), 
+            "alert-info", 
+            "", 
+            false);
 
         $headers = 'From: accounts-enwiki-l@lists.wikimedia.org';
+        
+        // TODO: move to template?
         mail($user->getEmail(), "ACC Account Suspended", "Dear " . $user->getOnWikiName() . ",\nYour account " . $user->getUsername() . " has been suspended by " . User::getCurrent()->getUsername() . " because ".$_POST['reason'].". To contest this suspension please email accounts-enwiki-l@lists.wikimedia.org.\n- The English Wikipedia Account Creation Team", $headers);
         BootstrapSkin::displayInternalFooter();
         die();
@@ -197,13 +246,23 @@ if (isset ($_GET['promote'])) {
 
     if($user == false)
     {
-        BootstrapSkin::displayAlertBox("Sorry, the user you are trying to promote could not be found.", "alert-error", "Error",true,false);
+        BootstrapSkin::displayAlertBox(
+            "Sorry, the user you are trying to promote could not be found.", 
+            "alert-error", 
+            "Error",
+            true,
+            false);
         BootstrapSkin::displayInternalFooter();
         die();
     }
 
     if ($user->isAdmin()) {
-        BootstrapSkin::displayAlertBox("Sorry, the user you are trying to promote has Administrator access.", "alert-error", "Error", true, false);
+        BootstrapSkin::displayAlertBox(
+            "Sorry, the user you are trying to promote has Administrator access.",
+            "alert-error", 
+            "Error", 
+            true, 
+            false);
         BootstrapSkin::displayInternalFooter();
         die();
     }
@@ -212,9 +271,15 @@ if (isset ($_GET['promote'])) {
 
     Notification::userPromoted($user);
 
-    BootstrapSkin::displayAlertBox(htmlentities($user->getUsername(),ENT_COMPAT,'UTF-8') . " promoted to 'Admin'", "alert-info", "", false);
+    BootstrapSkin::displayAlertBox(
+        htmlentities($user->getUsername(),ENT_COMPAT,'UTF-8') . " promoted to 'Admin'", 
+        "alert-info", 
+        "", 
+        false);
 
     $headers = 'From: accounts-enwiki-l@lists.wikimedia.org';
+    
+    // TODO: move to template?
     mail($user->getEmail(), "ACC Account Promoted", "Dear " . $user->getOnWikiName() . ",\nYour account " . $user->getUsername() . " has been promted to admin status by " . User::getCurrent()->getUsername() . ".\n- The English Wikipedia Account Creation Team", $headers);
     die();
 }
@@ -224,13 +289,22 @@ if (isset ($_GET['decline'])) {
 
     if($user == false)
     {
-        BootstrapSkin::displayAlertBox("Sorry, the user you are trying to decline could not be found.", "alert-error", "Error",true,false);
+        BootstrapSkin::displayAlertBox(
+            "Sorry, the user you are trying to decline could not be found.", 
+            "alert-error", 
+            "Error",
+            true,
+            false);
         BootstrapSkin::displayInternalFooter();
         die();
     }
 
     if ($user->isAdmin()) {
-        BootstrapSkin::displayAlertBox("Sorry, the user you are trying to decline is not new.", "alert-error", "Error", true, false);
+        BootstrapSkin::displayAlertBox("Sorry, the user you are trying to decline is not new.", 
+            "alert-error", 
+            "Error", 
+            true, 
+            false);
         BootstrapSkin::displayInternalFooter();
         die();
     }
@@ -248,9 +322,15 @@ if (isset ($_GET['decline'])) {
 
         Notification::userDeclined($user, $_POST['reason']);
 
-        BootstrapSkin::displayAlertBox("Declined user " . htmlentities($user->getUsername(),ENT_COMPAT,'UTF-8'), "alert-info", "", false);
+        BootstrapSkin::displayAlertBox(
+            "Declined user " . htmlentities($user->getUsername(),ENT_COMPAT,'UTF-8'), 
+            "alert-info", 
+            "", 
+            false);
 
         $headers = 'From: accounts-enwiki-l@lists.wikimedia.org';
+        
+        // TODO: move to template?
         mail($user->getEmail(), "ACC Account Declined", "Dear " . $user->getOnWikiName() . ",\nYour account " . $user->getUsername() . " has been declined access to the account creation tool by " . User::getCurrent()->getUsername() . " because " . $_POST['reason'] . ". For more infomation please email accounts-enwiki-l@lists.wikimedia.org.\n- The English Wikipedia Account Creation Team", $headers);
         BootstrapSkin::displayInternalFooter();
         die();
@@ -267,7 +347,12 @@ if ( isset ($_GET['rename']) && $enableRenames == 1 )
 
     if($user == false)
     {
-        BootstrapSkin::displayAlertBox("Sorry, the user you are trying to rename could not be found.", "alert-error", "Error", true, false);
+        BootstrapSkin::displayAlertBox(
+            "Sorry, the user you are trying to rename could not be found.", 
+            "alert-error", 
+            "Error", 
+            true, 
+            false);
         BootstrapSkin::displayInternalFooter();
         die();
     }
@@ -300,7 +385,12 @@ if ( isset ($_GET['rename']) && $enableRenames == 1 )
 
         if(!$database->beginTransaction())
         {
-            BootstrapSkin::displayAlertBox("Database transaction could not be started.", "alert-error", "Error", true, false);
+            BootstrapSkin::displayAlertBox(
+                "Database transaction could not be started.", 
+                "alert-error", 
+                "Error", 
+                true, 
+                false);
             BootstrapSkin::displayInternalFooter();
             die();
         }
@@ -315,7 +405,14 @@ if ( isset ($_GET['rename']) && $enableRenames == 1 )
             $logentry = serialize(array('old' => $oldname, 'new' => $_POST['newname']));
             Logger::renamedUser($database, $user, $logentry);
            
-            BootstrapSkin::displayAlertBox("Changed User " . htmlentities($oldname,ENT_COMPAT,'UTF-8') . " name to ". htmlentities($_POST['newname'],ENT_COMPAT,'UTF-8') , "alert-info","",false);
+            BootstrapSkin::displayAlertBox(
+                "Changed User " 
+                    . htmlentities($oldname,ENT_COMPAT,'UTF-8') 
+                    . " name to "
+                    . htmlentities($_POST['newname'],ENT_COMPAT,'UTF-8') , 
+                "alert-info",
+                "",
+                false);
         }
         catch (Exception $ex)
         {
@@ -343,7 +440,12 @@ if (isset ($_GET['edituser']) && $enableRenames == 1) {
 
     if($user == false)
     {
-        BootstrapSkin::displayAlertBox("Sorry, the user you are trying to rename could not be found.", "alert-error", "Error", true, false);
+        BootstrapSkin::displayAlertBox(
+            "Sorry, the user you are trying to rename could not be found.", 
+            "alert-error", 
+            "Error", 
+            true, 
+            false);
         BootstrapSkin::displayInternalFooter();
         die();
     }
@@ -356,7 +458,12 @@ if (isset ($_GET['edituser']) && $enableRenames == 1) {
         $database = gGetDb();
         if(!$database->beginTransaction())
         {
-            BootstrapSkin::displayAlertBox("Database transaction could not be started.", "alert-error", "Error", true, false);
+            BootstrapSkin::displayAlertBox(
+                "Database transaction could not be started.", 
+                "alert-error", 
+                "Error", 
+                true, 
+                false);
             BootstrapSkin::displayInternalFooter();
             die();
         }
@@ -401,7 +508,12 @@ echo <<<HTML
 </div>
 HTML;
 
-BootstrapSkin::displayAlertBox("If it says you can do it, you can do it. Please use this responsibly.", "alert-warning","This interface is NOT a toy.",true,false);
+BootstrapSkin::displayAlertBox(
+    "If it says you can do it, you can do it. Please use this responsibly.", 
+    "alert-warning",
+    "This interface is NOT a toy.",
+    true,
+    false);
 
 // assign to user
 $userListQuery = "SELECT username FROM user;";
